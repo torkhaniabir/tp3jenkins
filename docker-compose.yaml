@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.9'
 
 services:
   # Spring Boot Application
@@ -14,23 +14,24 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     depends_on:
       mysql:
-        condition: service_healthy  # Attendre que MySQL soit prêt
+        condition: service_healthy
 
   # MySQL Database
   mysql:
-    image: tp3jenkins
+    image: mysql:8.0  # Image corrigée
     restart: always
     environment:
-      MYSQL_DATABASE: 'api_etudiant'
-      MYSQL_ROOT_PASSWORD: 'root'  # Variable corrigée
+      MYSQL_DATABASE: "api_etudiant"
+      MYSQL_ROOT_PASSWORD: "root"
     ports:
       - "3306:3306"
     volumes:
       - api_etudiant:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-uroot", "-p$$MYSQL_ROOT_PASSWORD"]  # Healthcheck corrigé
       interval: 5s
       timeout: 10s
-      retries: 5
+      retries: 10
+
 volumes:
-  api_etudiant:  # Déclaré une seule fois
+  api_etudiant:
