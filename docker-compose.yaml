@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  # Spring Boot Application
+  spring-boot-app:
+    image: tp3jenkins
+    ports:
+      - "8091:8091"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/api_etudiant
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      mysql:
+        condition: service_healthy  # Attendre que MySQL soit prêt
+
+  # MySQL Database
+  mysql:
+    image: tp3jenkins
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'api_etudiant'
+      MYSQL_ROOT_PASSWORD: 'root'  # Variable corrigée
+    ports:
+      - "3306:3306"
+    volumes:
+      - api_etudiant:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+volumes:
+  api_etudiant:  # Déclaré une seule fois
