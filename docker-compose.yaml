@@ -5,7 +5,7 @@ services:
   spring-boot-app:
     image: tp3jenkins
     ports:
-      - "8091:8091"
+      - '0.0.0.0:8091:8091'
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/api_etudiant
       - SPRING_DATASOURCE_USERNAME=root
@@ -14,24 +14,20 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     depends_on:
       mysql:
-        condition: service_healthy
+       
 
   # MySQL Database
   mysql:
     image: mysql:8.0  # Image corrigée
     restart: always
     environment:
-      MYSQL_DATABASE: "api_etudiant"
-      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: 'api_etudiant'
+      MYSQL_ROOT_USERNAME: 'root'
+      MYSQL_ROOT_PASSWORD: 'root'
     ports:
-      - "3306:3306"
+      - '0.0.0.0:3306:3306'
     volumes:
       - api_etudiant:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-uroot", "-p$$MYSQL_ROOT_PASSWORD"]  # Healthcheck corrigé
-      interval: 5s
-      timeout: 10s
-      retries: 10
 
 volumes:
   api_etudiant:
